@@ -67,7 +67,7 @@ int main()
 
 
 
-	ifstream Inputfile(userinput);
+	ifstream Inputfile("benchmarks/" + userinput);
 	string line;
 	getline(Inputfile, line);   //THIS IS JUST TO SKIP THE FIRST LINE REMEMBER TO REMOVE
 
@@ -106,13 +106,13 @@ int main()
 		Edge* newEdge = new Edge(From, To, Capacity);
 		NodeList[From]->edges.push_back(newEdge);
 	}
-
+	
 
 	if (validGraph)
 	{
 
 
-		cout << "\nlist size " << NodeList.size();
+		cout << "\nlist size " << NodeList.size() << endl;
 
 		for (Node* n : NodeList)
 		{
@@ -148,7 +148,7 @@ int ReadNumberOfNodes(string FileName)
 
 	string line;
 
-	ifstream inputfile(FileName);
+	ifstream inputfile("benchmarks/"+FileName);
 
 	getline(inputfile, line);
 	istringstream firstLine(line);
@@ -170,7 +170,7 @@ void InputFileName()
 	cin >> userinput;
 	userinput = userinput + ".txt";
 
-	ifstream s(userinput);
+	ifstream s("benchmarks/" + userinput);
 
 	if (!s)
 	{
