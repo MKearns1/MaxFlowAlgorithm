@@ -7,10 +7,13 @@
       "RelativeMoniker": "D:0:0:{6357327A-6C41-4A9D-8062-72DEA95E0C2A}|Algorithms Coursework\\Algorithms Coursework.vcxproj|solutionrelative:Algorithms Coursework\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\w1972476\\Downloads\\graphs_cpp\\Graph.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector||{3B902123-F8A7-4915-9F01-361F908088D0}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\w1972476\\Downloads\\graphs_cpp\\Graph.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\w1972476\\Downloads\\graphs_cpp\\Graph.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -20,8 +23,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "vector",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
+              "ViewState": "AgIAADsIAAAAAAAAAAAIwFwIAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-04-24T15:21:18.666Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
@@ -30,7 +46,6 @@
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\w1972476\\Downloads\\graphs_cpp\\Graph.h",
               "ToolTip": "C:\\Users\\w1972476\\Downloads\\graphs_cpp\\Graph.h",
               "RelativeToolTip": "..\\..\\..\\..\\..\\w1972476\\Downloads\\graphs_cpp\\Graph.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-04-11T13:55:54.6Z"
             },
@@ -42,14 +57,14 @@
               "RelativeDocumentMoniker": "Algorithms Coursework\\Main.cpp",
               "ToolTip": "C:\\Users\\milor\\Documents\\GitHub\\MaxFlowAlgorithm\\Algorithms Coursework2\\Algorithms Coursework\\Main.cpp",
               "RelativeToolTip": "Algorithms Coursework\\Main.cpp",
-              "ViewState": "AgIAAIUAAAAAAAAAAAAYwGQAAABDAAAAAAAAAA==",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAYwIUAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-04-11T11:25:29.804Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Graph.cpp",
               "DocumentMoniker": "C:\\Users\\w1972476\\Downloads\\graphs_cpp\\Graph.cpp",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\w1972476\\Downloads\\graphs_cpp\\Graph.cpp",

@@ -12,15 +12,17 @@ using namespace std;
 
 
 string userinput;
-int NumNodes, EndNode;
-bool validGraph = true;
 
-int ReadNumberOfNodes(string FileName);
-void InputFileName();
-
-vector<vector<int>> capacity;
-vector<vector<int>> adj;
-
+string InputFileName() {
+    cin >> userinput;
+    userinput = userinput + ".txt";
+    ifstream s("benchmarks/" + userinput);
+    if (!s) {
+        cout << "\nFile can not be found.\n";
+        return "";
+    }
+    return userinput;
+}
 
 class Edge
 {
@@ -39,195 +41,116 @@ public:
 
 };
 
-vector<vector<Edge*>> AdjacenceyList;
+int CreateGraph(string FileName, vector<vector<Edge*>>& AdjacencyList);
 
-int bfs(int s, int t, vector<Edge*>& previousNode) {
+int bfs(int s, int t, vector<Edge*>& EdgeTo, vector<vector<Edge*>>& AdjacencyList, bool PrintStats) {
 
-    bool* visited = new bool[previousNode.size()];
-    for (int x = 0; x < previousNode.size(); x++)
-    {
-        visited[x] = false;
-    }
-        
-    vector<int> flow;
+    vector<bool> visited (EdgeTo.size(), false);
 
-    fill(previousNode.begin(), previousNode.end(), nullptr);
-   // previousNode[s] = -2;
     visited[s] = true;
+
+    fill(EdgeTo.begin(), EdgeTo.end(), nullptr);
+
     queue<pair<int, int>> q;
     q.push({ s, INT_MAX });
-    //cout << "PATH TO " << t << " is ";
+
     while (!q.empty()) {
+
         int currentNode = q.front().first;
         int flow = q.front().second;
         q.pop();
 
-        //for (int next : adj[currentNode]) {
-        //   // cout << parent[next] << endl;
-        //    if (parent[next] == -1 && capacity[currentNode][next] > 0) {
-        //        parent[next] = currentNode;
-        //        int new_flow = min(flow, capacity[currentNode][next]);
-        //        if (next == t)
-        //            return new_flow;
-        //        q.push({ next, new_flow });
-        //    }
-        //}
-
-        for (int i = 0; i < AdjacenceyList.at(currentNode).size(); i++)
+        for (int i = 0; i < AdjacencyList.at(currentNode).size(); i++) //Check every Edge connectected to the current node
         {
-            int TargetNode = AdjacenceyList.at(currentNode).at(i)->target;
-            int ResidualEdgeCapacity = AdjacenceyList.at(currentNode).at(i)->capacity - AdjacenceyList.at(currentNode).at(i)->flow;
+            int TargetNode = AdjacencyList.at(currentNode).at(i)->target;
+            int ResidualEdgeCapacity = AdjacencyList.at(currentNode).at(i)->capacity - AdjacencyList.at(currentNode).at(i)->flow;
             
 
-            if(!visited[TargetNode])
+            if(!visited[TargetNode])    //Check that the Edge's target node hasn't been visited and has some capacity left
             {
                 if (ResidualEdgeCapacity > 0)
                 {
-                    //cout << TargetNode << "->";
                     visited[TargetNode] = true;
 
-                    previousNode.at(TargetNode) = AdjacenceyList.at(currentNode).at(i);
-                    int BottleNeck;
-                    if (flow < AdjacenceyList.at(currentNode).at(i)->capacity)
+                    EdgeTo.at(TargetNode) = AdjacencyList.at(currentNode).at(i); // we got to the current target node using this edge on the adjacencey list
+
+                    int BottleNeck = (flow < ResidualEdgeCapacity) ? flow : ResidualEdgeCapacity;   //Set the bottleneck of this path to the smallest value
+                 
+                    if (AdjacencyList.at(currentNode).at(i)->target == t)  //if one of the edges leads to the target node return the max amount of flow that was possible on this path
                     {
-                        BottleNeck = flow;
-                    }
-                    else 
-                    {
-                        BottleNeck = AdjacenceyList.at(currentNode).at(i)->capacity;
-                    }
-                    if (AdjacenceyList.at(currentNode).at(i)->target == t)
-                    {
+                        if(PrintStats)
                         cout << "bottleneck was " << BottleNeck<<endl;
+
                         return BottleNeck;
                     }
-                    else { q.push({ TargetNode, BottleNeck }); }
+                    else { q.push({ TargetNode, BottleNeck }); } //if still not reached target node add more destination nodes
                 }               
             }
         }
     }
-    return 0;
+    return 0;       //No flow can be passed because theres no more remaining paths to take so return 0
 }
 
-int edmondsKarp(int s, int t) {
-    int flow = 0;
-    vector<Edge*> previousNode(NumNodes);
-    int new_flow = bfs(s, t, previousNode);
+int MaxFlow(int s, int t, vector<vector<Edge*>>& AdjacencyList, bool PrintStats) {
 
-    while (new_flow) {
+    int flow = 0;
+    vector<Edge*> EdgeTo(t+1);     //stores the edge taken to get to each node (so EdgeTo[s] would be null)
+    int new_flow = bfs(s, t, EdgeTo, AdjacencyList, PrintStats);
+
+    while (new_flow != 0) // as long as the bfs function can find a new path
+    {
         flow += new_flow;
-        int cur = t;
+        int CurrentTarget = t;
         vector<int> path;
 
-        while (cur != s) {
-            Edge* prev = previousNode[cur];
-           // AdjacenceyList.at(prev).at(cur);
+        while (CurrentTarget != s)  //Iterates through each edge in the path from the target to the source
+        {
+            Edge* prev = EdgeTo[CurrentTarget];
 
-            path.push_back(cur);
+            path.push_back(CurrentTarget);
 
+           EdgeTo[CurrentTarget]->flow += new_flow;             //Increase the flow of each edge by the bottleneck found by bfs
+           EdgeTo[CurrentTarget]->Inverse->flow -= new_flow;    //Reduce the flow of the reverse edge by the same amount
 
-            //AdjacenceyList.
-            previousNode[cur]->capacity -= new_flow;
-            previousNode[cur]->Inverse->capacity += new_flow;
-            cur = prev->Inverse->target;
-           /* capacity[prev][cur] -= new_flow;
-            capacity[cur][prev] += new_flow;
-            cur = prev;*/
+            CurrentTarget = prev->Inverse->target;                  //Set the current target to the previous node.
+
         }
-        cout << s<<"->";
-        for (int i = path.size() - 1; i >= 0; --i) {
-            cout << path[i];
-            if (i != 0) cout << "->";
-        }cout << endl;
-
-        new_flow = bfs(s, t, previousNode);
+        if (PrintStats) {
+            cout << s << "->";
+            for (int i = path.size() - 1; i >= 0; --i) {
+                cout << path[i];
+                if (i != 0) cout << "->";
+            }cout << endl;
+        }
+        new_flow = bfs(s, t, EdgeTo, AdjacencyList, PrintStats);
     }
     
     return flow;
 }
 
 int main() {
-    InputFileName();
 
-    auto start = chrono::high_resolution_clock::now();
-
-    NumNodes = ReadNumberOfNodes(userinput);
-
-    AdjacenceyList.resize(NumNodes);
-
-    capacity.assign(NumNodes, vector<int>(NumNodes, 0));
-    adj.assign(NumNodes, vector<int>());
-
-    ifstream Inputfile("benchmarks/" + userinput);
-    string line;
-    getline(Inputfile, line); // Skip first line
-
-    while (getline(Inputfile, line)) {
-        if (line.empty())
-            continue;
-
-        istringstream ss(line);
-        int From, To, Capacity;
-        ss >> From >> To >> Capacity;
-
-        if (From < 0 || To < 0 || Capacity <= 0 || From >= NumNodes || To >= NumNodes || From == To) {
-            validGraph = false;
-            cout << "\nInvalid edge detected. Graph construction cancelled.\n";
-            break;
-        }
-
-        capacity[From][To] += Capacity;
-        adj[From].push_back(To);
-        adj[To].push_back(From); // Add reverse path for residual graph
-
-        Edge* NewEdge = new Edge(Capacity, 0, To);
-        Edge* ReverseEdge = new Edge(0, 0, From);
-
-        NewEdge->Inverse = ReverseEdge;
-        ReverseEdge->Inverse = NewEdge;
-
-        AdjacenceyList.at(From).push_back(NewEdge);
-        AdjacenceyList.at(To).push_back(ReverseEdge);
-
-    }
-
+    cout << "Please Enter the name of the file you would like to read (without the .txt)" << endl;
     bool printGraphStats = false;
 
-    if (printGraphStats) {
+    string userinput;
+    userinput = InputFileName();
 
-        /*for (vector<int> n : adj)
-        {
-            for (int i : n)
-            {
-                cout << " " << i;
-            }
-            cout << endl;
-        }
-        for (vector<int> n : capacity)
-        {
-            for (int i : n)
-            {
-                cout << " " << i;
-            }
-            cout << endl;
-        }*/
-
-
-        for (int i = 0; i < AdjacenceyList.size();i++)
-        {
-            cout << "node " << i << " has connections to ";
-            for (Edge* e : AdjacenceyList.at(i))
-            {
-                cout << e->target <<" ";
-            }
-            cout << endl;
-        }
-
-
+    while (userinput == "")
+    {
+        userinput = InputFileName();
     }
-    if (validGraph) {
+
+    auto start = chrono::high_resolution_clock::now();   
+
+    vector<vector<Edge*>> AdjacencyList;
+
+    int NumberOfNodes = CreateGraph(userinput, AdjacencyList);
+    int TargetNode = NumberOfNodes - 1;
+
+    if (NumberOfNodes != 0) {
         cout << "\nCalculating max flow using Edmonds-Karp...\n";
-        int maxFlow = edmondsKarp(0, EndNode);
+        int maxFlow = MaxFlow(0, TargetNode, AdjacencyList,printGraphStats);
         cout << "Max Flow: " << maxFlow << endl;
     }
 
@@ -235,25 +158,59 @@ int main() {
     chrono::duration<double> elapsedTime = end - start;
     cout << "Time Taken- " << elapsedTime.count() << "s" << endl;
 
+
+    if (printGraphStats) {
+
+        for (int i = 0; i < AdjacencyList.size(); i++)
+        {
+            cout << "node " << i << " has connections to ";
+            for (Edge* e : AdjacencyList.at(i))
+            {
+                cout << e->target << " ";
+            }
+            cout << endl;
+        }
+    }
+
     return 0;
 }
 
-int ReadNumberOfNodes(string FileName) {
+int CreateGraph(string FileName, vector<vector<Edge*>>& AdjacencyList) {
+
+    int NumberOfNodes;
+
     string line;
     ifstream inputfile("benchmarks/" + FileName);
     getline(inputfile, line);
     istringstream firstLine(line);
-    int NumberOfNodes;
     firstLine >> NumberOfNodes;
-    EndNode = NumberOfNodes - 1;
+
+    AdjacencyList.resize(NumberOfNodes);
+
+    while (getline(inputfile, line)) {
+        if (line.empty())
+            continue;
+
+        istringstream ss(line);
+        int From, To, Capacity;
+        ss >> From >> To >> Capacity;
+
+        if (From < 0 || To < 0 || Capacity <= 0 || From >= NumberOfNodes || To >= NumberOfNodes || From == To) //Checking that every line has no impossible values e.g an edge between a node and itself
+        {
+            cout << "\nInvalid edge detected. Graph construction cancelled.\n";
+            return 0;
+        }
+
+        Edge* NewEdge = new Edge(Capacity, 0, To);
+        Edge* ReverseEdge = new Edge(0, 0, From);
+
+        NewEdge->Inverse = ReverseEdge;
+        ReverseEdge->Inverse = NewEdge;
+
+        AdjacencyList.at(From).push_back(NewEdge);
+        AdjacencyList.at(To).push_back(ReverseEdge);
+
+    }
     return NumberOfNodes;
 }
 
-void InputFileName() {
-    cin >> userinput;
-    userinput = userinput + ".txt";
-    ifstream s("benchmarks/" + userinput);
-    if (!s) {
-        cout << "\nFile can not be found.\n";
-    }
-}
