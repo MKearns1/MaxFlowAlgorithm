@@ -78,8 +78,6 @@ int bfs(int s, int t, vector<Edge*>& EdgeTo, vector<vector<Edge*>>& AdjacencyLis
                  
                     if (AdjacencyList.at(currentNode).at(i)->target == t)  //if one of the edges leads to the target node return the max amount of flow that was possible on this path
                     {
-                        if(PrintStats)
-                        cout << "bottleneck was " << BottleNeck<<endl;
 
                         return BottleNeck;
                     }
@@ -96,13 +94,19 @@ int MaxFlow(int s, int t, vector<vector<Edge*>>& AdjacencyList, bool PrintStats)
     int flow = 0;
     vector<Edge*> EdgeTo(t+1);     //stores the edge taken to get to each node (so EdgeTo[s] would be null)
     int new_flow = bfs(s, t, EdgeTo, AdjacencyList, PrintStats);
-
+    int i = 0;
     while (new_flow != 0) // as long as the bfs function can find a new path
     {
         flow += new_flow;
         int CurrentTarget = t;
         vector<int> path;
+        
+        if (PrintStats) {
+            cout << "Iteration: " << i << endl;
+            cout << "bottleneck was " << new_flow << endl;
 
+            cout << "Current Max Flow is " << flow << endl;
+        }
         while (CurrentTarget != s)  //Iterates through each edge in the path from the target to the source
         {
             Edge* prev = EdgeTo[CurrentTarget];
@@ -120,9 +124,10 @@ int MaxFlow(int s, int t, vector<vector<Edge*>>& AdjacencyList, bool PrintStats)
             for (int i = path.size() - 1; i >= 0; --i) {
                 cout << path[i];
                 if (i != 0) cout << "->";
-            }cout << endl;
+            }cout<<'\n' << endl;
         }
         new_flow = bfs(s, t, EdgeTo, AdjacencyList, PrintStats);
+        i++;
     }
     
     return flow;
@@ -141,12 +146,15 @@ int main() {
         userinput = InputFileName();
     }
 
-    auto start = chrono::high_resolution_clock::now();   
+    auto gstart = chrono::high_resolution_clock::now();   
 
     vector<vector<Edge*>> AdjacencyList;
 
     int NumberOfNodes = CreateGraph(userinput, AdjacencyList);
     int TargetNode = NumberOfNodes - 1;
+    auto gend = chrono::high_resolution_clock::now();
+
+    auto start = chrono::high_resolution_clock::now();
 
     if (NumberOfNodes != 0) {
         cout << "\nCalculating max flow using Edmonds-Karp...\n";
@@ -155,12 +163,15 @@ int main() {
     }
 
     auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> CreationTime = gend - gstart;
     chrono::duration<double> elapsedTime = end - start;
-    cout << "Time Taken- " << elapsedTime.count() << "s" << endl;
+    cout << "Time Taken to create graph- " << CreationTime.count() << "s" << endl;
+    cout << "Time Taken to find max flow- " << elapsedTime.count() << "s" << endl;
 
 
     if (printGraphStats) {
 
+        cout << endl;
         for (int i = 0; i < AdjacencyList.size(); i++)
         {
             cout << "node " << i << " has connections to ";
